@@ -12,12 +12,17 @@ exports.createUser = async (req, res)=>{
     }
 };
 
-exports.getUsers = async(req,res)=>{
+exports.getUsers = async (req, res) => {
+  try {
     const users = await User.find();
     res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-exports.getUsers = async (req,res)=>{
+
+exports.getUser = async (req,res)=>{
     try{
         const user = await User.findById(req.params.id);
         if(!user) return res.status(404).json({error: 'user not found'});
@@ -38,14 +43,12 @@ exports.updateUser = async (req,res)=>{
     }
 };
 
-exports.deleteUser = async (req,res)=>{
-    try{
-        const user = User.findByIdAndDelete(req.params.id);
-        if(!user) return res.status(404).json({error:'user not found'});
-        res.json({message:'user deleted'});
-    }catch{
-            res.status(400).json({ error: 'Invalid ID' });
-
-    }
-
-}
+exports.deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id); // supprime par ID
+    if (!user) return res.status(404).json({ error: "user not found" });
+    res.json({ message: "user deleted" }); // message de succès
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
